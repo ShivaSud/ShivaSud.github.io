@@ -16,11 +16,13 @@ Continuing from the example above, lets say we perform an ordinary linear regres
 
 ## Multiple Features
 In the previous blog post regarding linear regression, we only considered the simple case of having just one input feature, but in this blog post I will explain how we can use multiple features to predict the target variable. Initially, we considered the following line 
+
 $$ y  = mx + c $$ 
-* y is the target variable 
-* m is the gradient 
-* x is the input vairable (a feature)
-* c is the y-intercept 
+
+* $y$ is the target variable 
+* $m$ is the gradient 
+* $x$ is the input vairable (a feature)
+* $c$ is the y-intercept 
 
 Now when predicting the target variable using multiple features, we will give each feature its own value for m. This is because each feature will impact the prediction of the target variable by a different amount and so we need to train our algorithm such that it can learn these values. Using the word gradient here doesn't make sense anymore, so we will use the more accurate word **weight** as commonly used machine learning. In the same way, the y-intercept is now called the **bias**. Hence we have the new equation:
 
@@ -41,7 +43,7 @@ $$ z = \vec{\theta}^\top\vec{x}+c$$
 
 This provides the predicted value for the $ith$ row of data, hence for clarity we can update our equation to clearly show this
 
-$$ z_i = \vec{\theta}^\top\vec{x_i}+c$$
+$$ z^i = \vec{\theta}^\top\vec{x^i}+c$$
 
 ## The Sigmoid Function
 
@@ -54,25 +56,25 @@ The graph for the sigmoid function can be seen below:
 
 You can see why the sigmoid function is very appropriate for this scenario. It has asymptotes at 0 and 1 (you can plug in and check for yourself), large values are close to 1 and small values are close to 0, giving the function a very even spread.
 
-Now if we input the value $y_i$ into the sigmoid function we will get a function that takes in all of the features and predicts a probability for the target value.
+Now if we input the value $y^i$ into the sigmoid function we will get a function that takes in all of the features and predicts a probability for the target value.
 
-$$ \hat{y_i} = \phi(z_i)=\frac{1}{1+e^{-(\vec{\theta}^\top\vec{x_i}+c)}}$$
+$$ {\hat{y}^i} = \phi(z^i)=\frac{1}{1+e^{-(\vec{\theta}^\top\vec{x^i}+c)}}$$
 
-* $\hat{y_i}$ is the predicted probability of the target variable
+* ${\hat{y}^i}$ is the predicted probability of the target variable
 
-## Creating a Loss function
+## Creating a Likelihood function
 
 If we want to optimise this function then we need an equation to compare the predicted probability of y, to its true label, which will be 0 or 1. We want to then train the model such that the predicted probability should be as close as possible to its label. In essence, when the true label is 0, the predicted probability should be close to 0 and when the true label is 1, the predicted probabality should be close to 1. 
 
 Here is the mathematical equation for what I have described above:
 
-$$\mathcal{L(\theta)} = \Pi_{i = 1}^{n} \space \hat{y_i}^{y_i}(1-\hat{y_i})^{1- y_i}$$
+$$\mathcal{L(\theta)} = \prod_{i = 1}^{n} \space {\hat{y}^i}^{y^i}(1-{\hat{y}^i})^{1- y^i}$$
 
 This function essentially calculates the total error of the predictions, given the current weights. We want to optimise this function such that the value of the loss function is as close as possible to 1.
 
 Lets now walk through the two possible scenarios - when the label is 1 and when the label is 0 - to better understand how the function works conceptually:
-   1. If the true label is 1, then $(1-\hat{y_i})^{1- y_i}$ will collapse completely, because anything to the power of 0 is 1, and multiplying by 1 has no effect. Then the value of  $\hat{y_i}^{y_i}$ will collapse simply into $\hat{y_i}$ because it has been raised to the power of 1, which has no effect. Hence, we have been just left with the predicted probability. If this value is close to 1, then it won't contribute much to the error decreasing from 1. If this value is close to 0 then it will contribute a lot to the error decreasing, which is good because it is clearly predicting the wrong label.
-   2. If the true label is 0, then $\hat{y_i}^{y_i}$ will collapse completely, because anything to the power of 0 is 1, and multiplying by 1 has no effect. Then the value of  $(1-\hat{y_i})^{1- y_i}$ will collapse simply into $1-\hat{y_i}$ because it has been raised to the power of 1, which has no effect. Hence, we have been just left with the $1 - \text{predicted probability}$. If the predicted value is close to 0, then $1 - \text{predicted probability}$ won't contribute much to the error decreasing from 1. If $1 - \text{predicted probability}$ is close to 0 then it will contribute a lot to the error decreasing, which is good because it is clearly predicting the wrong label.
+   1. If the true label is 1, then $(1-{\hat{y}^i})^{1- y^i}$ will collapse completely, because anything to the power of 0 is 1, and multiplying by 1 has no effect. Then the value of  ${\hat{y}^i}^{y^i}$ will collapse simply into ${\hat{y}^i}$ because it has been raised to the power of 1, which has no effect. Hence, we have been just left with the predicted probability. If this value is close to 1, then it won't contribute much to the error decreasing from 1. If this value is close to 0 then it will contribute a lot to the error decreasing, which is good because it is clearly predicting the wrong label.
+   2. If the true label is 0, then ${\hat{y}^i}^{y^i}$ will collapse completely, because anything to the power of 0 is 1, and multiplying by 1 has no effect. Then the value of  $(1-{\hat{y}^i})^{1- y^i}$ will collapse simply into $1-{\hat{y}^i}$ because it has been raised to the power of 1, which has no effect. Hence, we have been just left with the $1 - \text{predicted probability}$. If the predicted value is close to 0, then $1 - \text{predicted probability}$ won't contribute much to the error decreasing from 1. If $1 - \text{predicted probability}$ is close to 0 then it will contribute a lot to the error decreasing, which is good because it is clearly predicting the wrong label.
 
 ## Cross-Entropy Loss function
 
@@ -80,34 +82,147 @@ While the above loss function works in theory, there are a few adjustments that 
 
 First of all gradient descent works to minimise the error, however we are currently trying to maximise the error function so it can be as close to 1, which doesn't make sense in this context. To fix this we negate the loss function so that now optimising the function means that we are minimising rather than maximising the function.
 
-$$\mathcal{L(\theta)} = -\Pi_{i = 1}^{n} \space \hat{y_i}^{y_i}(1-\hat{y_i})^{1- y_i}$$
+$$\mathcal{L(\theta)} = -\prod_{i = 1}^{n} \space {\hat{y}^i}^{y^i}(1-{\hat{y}^i})^{1- y^i}$$
 
-Second of all, performing multiplication on very long decimals continuously for the every single row in the dataset can be a very bad idea. This is because every time we make a multiplication, the computer will round the decimal so that it can be stored appropriately in binary. Doing this multiple times can amplify the distortion between what the actual error is, and what the computer has stored. This effect is called **numerical instability**. To prevent this we need to find a way to avoid using multiplication. The way to do this is by taking the log of the function as follows 
+Second of all, performing multiplication on very long decimals continuously for the every single row in the dataset can be a very bad idea. This is because every time we make a multiplication, the computer will round the decimal so that it can be stored appropriately in binary. Doing this multiple cdot can amplify the distortion between what the actual error is, and what the computer has stored. This effect is called **numerical instability**. To prevent this we need to find a way to avoid using multiplication. The way to do this is by taking the log of the function as follows 
 
-$$\log\mathcal{L(\theta)} = -\sum_{i = 1}^{n} \log(\space \hat{y_i}^{y_i}(1-\hat{y_i})^{1- y_i})$$
+$$\ln\mathcal{L(\theta)} = -\sum_{i = 1}^{n} \ln(\space {\hat{y}^i}^{y^i}(1-{\hat{y}^i})^{1- y^i})$$
 
-$$\log\mathcal{L(\theta)} = -\sum_{i=1}^n\left[y_i\log(\hat{y}_i)+(1-y_i)\log(1-\hat{y}_i)\right]$$
+$$\ln\mathcal{L(\theta)} = -\sum_{i=1}^n\left[y^i\ln(\hat{y}^i)+(1-y^i)\ln(1-\hat{y}^i)\right]$$
+
 Although, now that we are using addition we need to take the mean error from all of the samples hence we can fix our previous equation to get our final loss function:
-$$\text{Cross Entropy Loss Function} = \log\mathcal{L(\theta)} = -\frac{1}{n}\sum_{i=1}^n\left[y_i\log(\hat{y}_i)+(1-y_i)\log(1-\hat{y}_i)\right]$$
+
+$$\text{Cross Entropy Loss Function} = \ln\mathcal{L(\theta)} = -\frac{1}{n}\sum_{i=1}^n\left[y^i\ln(\hat{y}^i)+(1-y^i)\ln(1-\hat{y}^i)\right]$$
 
 The equation that we have reached to is a commonly used loss function in machine learning, called the Cross Entropy Loss Function!
 
 ## Gradient Descent
 
+Now that we have the loss function we can perform gradient descent to iterativelly update the weights of each feature, so that it is tuned to correctly classify each sample into the correct categories. To be more precise, we need to see how the error changes with respect to each parameter ($\frac{\partial E}{\partial\theta_{j}}$) and then minimise this error.
+
+Currently though, we have the two functions:
+
+$$ {\hat{y}^i} = \frac{1}{1+e^{-(\vec{\theta}^\top\vec{x^i}+c)}}$$
+
+$$\text{E} = -\frac{1}{n}\sum_{i=1}^n\left[y^i\ln(\hat{y}^i)+(1-y^i)\ln(1-\hat{y}^i)\right]$$
+
+To find the value of $\frac{\partial E}{\partial\theta_{j}}$ we can use the chain rule as follows
+
+$$\frac{\partial E}{\partial\theta_{j}} = \frac{\partial {\hat{y}^i}} {\partial\theta_{j}} \cdot \frac{\partial E}{\partial{\hat{y}^i}}$$
+
+Lets first find $\frac{\partial {\hat{y}^i}} {\partial\theta_{j}}$: 
+
+To break this down even further we can say:
+
+$$ z^i = \vec{\theta}^\top\vec{x^i}+c$$
+
+$$ {\hat{y}^i} = \frac{1}{1+e^{-z^i}}$$
+
+$$\frac{\partial {\hat{y}^i}}{\partial\theta_{j}} = \frac{\partial {\hat{y}^i}} {\partial z^i} \cdot \frac{\partial z^i}{\partial\theta_j}$$
+
+Lets first find $\frac{\partial {\hat{y}^i}} {\partial z^i}$
+
+$$ {\hat{y}^i} = (1+e^{-z^i})^{-1}$$
+
+$$\frac{\partial{\hat{y}^i}}{\partial z^i} = -1 \cdot -e^{-z^i}(1+e^{-z^i})^{-2}$$ 
+
+$$=\frac{e^{-z^i}}{(1+e^{-z^i})^{2}}$$
+
+$$=\frac{e^{-z^i}}{1+e^{-z^i}} \cdot \frac{1}{1+e^{-z^i}}$$
+
+$$=\frac{(1+e^{-z^i})-1}{1+e^{-z^i}} \cdot {\hat{y}^i}$$
+
+$$= (1-{\hat{y}^i}){\hat{y}^i}$$
+
+Now lets find $\frac{\partial z^i}{\partial\theta_j}$
+
+$$\frac{\partial z^i}{\partial\theta_j} = \vec{x^i_j}$$
+
+Hence we can find $\frac{\partial {\hat{y}^i}}{\partial\theta_{j}}$
+
+$$= (1-{\hat{y}^i}){\hat{y}^i} \cdot \vec{x^i_j}$$
+
+Now we need to find $\frac{\partial E}{\partial{\hat{y}^i}}$
+
+Since we are finding the derivative for the $ith$ value we can remove the sigma notation
+
+$$\frac{\partial\mathrm{E}}{\partial\hat{y}^i}=-\frac{1}{n}\left(\frac{y^i}{\hat{y}^i}-\frac{1-y^i}{1-\hat{y}^i}\right)$$
+
+And finally the value of $\frac{\partial E}{\partial\theta_{j}}$
+
+$$ \frac{\partial E}{\partial \theta_j} = \sum_{i=1}^n (1 - \hat{y}^{i}) \hat{y}^{i} x_j^{i} \cdot \left[ -\frac{1}{n} \left( \frac{y^{i}}{\hat{y}^{i}} - \frac{1 - y^{i}}{1 - \hat{y}^{i}} \right) \right]$$
+
+$$ = -\frac{1}{n} \sum_{i=1}^n (1 - \hat{y}^{i}) \hat{y}^{i} x_j^{i} \cdot \frac{y^{i} (1 - \hat{y}^{i}) - (1 - y^{i}) \hat{y}^{i}}{(1 - \hat{y}^{i}) \hat{y}^{i}}$$
+
+$$ = -\frac{1}{n} \sum_{i=1}^n x_j^{i} \cdot \left( y^{i} (1 - \hat{y}^{i}) - (1 - y^{i}) \hat{y}^{i} \right)$$
+
+$$ = -\frac{1}{n} \sum_{i=1}^n x_j^{i} \cdot \left( y^{i} - y^{i} \hat{y}^{i} - \hat{y}^{i} + y^{i} \hat{y}^{i} \right)$$
+
+$$ = -\frac{1}{n} \sum_{i=1}^n x_j^{i} \cdot (y^{i} - \hat{y}^{i})$$
+
+This is our final equation!
 
 # Code
 ``` python
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
-
 class LogisticRegression:
-    def __init__(self):
-        pass
-
-    def fit():
-        pass
     
-    def predict():
-        pass
+    def __init__(self):
+        self.w = None
+        self.c = None
+    
+    def sigmoid(self, z):
+        return 1 / (1 + np.exp(-z))
+    
+    def fit(self, X, y, learning_rate = 0.0000001, epochs = 100):
+        X = X.to_numpy()
+        y = y.to_numpy().reshape(-1, 1)
+
+        n_samples, n_features = X.shape
+        self.w = np.zeros((n_features, 1))
+        self.c = 0
+
+        for _ in range(epochs):
+            z = np.dot(X, self.w) + self.c
+
+            y_pred = self.sigmoid(z)
+
+            error = y - y_pred
+            dw = np.dot(X.T, error) / n_samples
+            dc = np.sum(error) / n_samples
+
+            self.w += learning_rate * dw
+            self.c += learning_rate * dc
+
+
+    def predict(self, X):
+        X = X.to_numpy()
+        return self.sigmoid(np.dot(X, self.w) + self.c)
+
+#Defining the X and y arrays
+
+df = pd.read_csv("LogisticRegression/framingham_train.csv")
+df_clean = df.dropna()
+# Split features and target
+X_train = df_clean.drop("TenYearCHD", axis=1)
+y_train = df_clean["TenYearCHD"]
+
+# Fit your model
+model = LogisticRegression()
+model.fit(X_train, y_train, learning_rate=0.0001, epochs=10000)
+
+df = pd.read_csv("LogisticRegression/framingham_test.csv")
+df_clean = df.dropna()
+X_test = df_clean.drop("TenYearCHD", axis=1)
+y_test = df_clean["TenYearCHD"]
+
+# Predict
+y_pred_prob = model.predict(X_test)
+# Convert probabilities to binary predictions (threshold 0.5)
+y_pred = (y_pred_prob >= 0.5).astype(int).flatten()
+# Calculate accuracy
+accuracy = (y_pred == y_test.to_numpy()).mean() * 100
+print(f"Accuracy: {accuracy:.2f}%")
 ```

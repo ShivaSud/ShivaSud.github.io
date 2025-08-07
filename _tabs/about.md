@@ -9,3 +9,4 @@ Hello, I am Shiva Sud, welcome to my website! The aim of this website is to docu
 Need to write an article on:
 * MSE vs MAE
 * Gradient Descent
+I NEED TO FIND DL/DC IN THE LOGISTIC REGRESSION POST

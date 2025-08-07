@@ -11,7 +11,10 @@ This is the first blog of a long series, where I will explain how common machine
 
 # Theory
 
+## Overview
 Linear regression is a type of supervised learning algorithm that models the relationship between one or more input variables (features) and a target variable, by calculating the line of best fit during the training process. This line of best fit is then used to make predictions of the target variable using the input features. In this article we are only going to deal with bivariate data and use one feature to make the algorithm easier to understand conceptually.
+
+## Mean Squared Error Loss Function
 
 The equation of a straight line is:
 
@@ -34,6 +37,8 @@ $$ E: \frac{1}{n} \sum_{i=1}^{n} (y_{i} - \hat{y}_{i})^{2}$$
 * $y_i$ represents the observed values
 * $\hat{y}_{i}$ represents the predicted values
 
+## Gradient Descent
+
 Now we have the loss function we need to figure out how we can use the result to actually change the values of m and c. Since we want to minimise the loss function we can use calculus and differentiate the loss function with respect to m and c and use this value to adjust their values in the correct direction. 
 
 To do this we need to write the loss function in terms of m and c. This gives us:
@@ -49,6 +54,8 @@ Now we can repeat this process by finding how the error changes with respect y-i
 $$\frac{\partial E}{\partial c}=\frac{1}{n}\cdot\sum_{i=1}^{n}-2\cdot (y_{i}-(m\cdot x_{i}+c))$$
 
 We can use these derivatives now to adjust the values of m and c. If we subtract the value of $\frac{\partial E}{\partial m}$ from the original value of the gradient then the next time round the change in the error with respect to the gradient will decrease, up until the point at which this error is zero and the gradient of the line matches the data, as closely as possible. The same logic works for the y-intercept, eventually providing us with the line of best fit for the provided data.
+
+## Learning rate and epochs
 
 When dealing with multiple features, the different features not normalised, which may make the gradients become large and cause the algorithm to overshoot and miss the point where the error is minimum, hence failing the task. To prevent this we multiply the derivative by a **learning rate**, which is normally a small decimal that scales the partial derivative down, hence stopping the value of m and c from overshooting from what is optimal.
 
