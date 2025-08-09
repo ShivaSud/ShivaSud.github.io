@@ -1,6 +1,6 @@
 ---
 title: Logistic Regression
-date: 2025-08-03
+date: 2025-08-07
 categories: [Machine Learning]
 tags: [machine-learning]
 math: true
