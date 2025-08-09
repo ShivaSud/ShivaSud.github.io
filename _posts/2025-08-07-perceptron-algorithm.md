@@ -1,6 +1,6 @@
 ---
-title: Logistic Regression
-date: 2025-08-07
+title: Perceptron Algorithm
+date: 2025-08-08
 categories: [Machine Learning]
 tags: [machine-learning]
 math: true
